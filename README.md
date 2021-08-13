@@ -14,6 +14,11 @@
 6.  字典管理：对系统中经常使用的一些较为固定的数据进行维护。
 7.  参数管理：对系统动态配置常用参数。
 
+## github地址
+[github:https://github.com/druidcaesa/monkey-admin](https://github.com/druidcaesa/monkey-admin)
+## 码云地址
+[码云https://gitee.com/termites/monkey-admin](https://gitee.com/termites/monkey-admin)
+
 ## 演示地址
 [http://www.monkeycool.cn](http://www.monkeycool.cn)
 账号：admin  密码：admin123
@@ -61,6 +66,8 @@ go run main.go 直接访问http://localhost:8080
 >excelize [https://github.com/qax-os/excelize](https://github.com/qax-os/excelize)
 >
 >xorm [https://github.com/go-xorm/xorm](https://github.com/go-xorm/xorm)
+
+## 感觉对自己学习和工作有用的，麻烦给一个小小的star
 
 ## 免责声明：
 > 1、monkey-admin仅限自己学习使用，一切商业行为与monkey-admin无关。
