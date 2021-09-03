@@ -44,10 +44,13 @@ func newPool(opt common.RedisConnOpt) *redis.Pool {
 				log.Fatalf("Redis.Dial: %v", err)
 				return nil, err
 			}
-			if _, err := c.Do("AUTH", opt.Password); err != nil {
-				c.Close()
-				log.Fatalf("Redis.AUTH: %v", err)
-				return nil, err
+			//当redis不存在密码时不进行认证处理--->感谢"团结丶小伟"剔除的这个bug
+			if gotool.StrUtils.HasNotEmpty(opt.Password) {
+				if _, err := c.Do("AUTH", opt.Password); err != nil {
+					c.Close()
+					log.Fatalf("Redis.AUTH: %v", err)
+					return nil, err
+				}
 			}
 			if _, err := c.Do("SELECT", opt.Index); err != nil {
 				c.Close()
