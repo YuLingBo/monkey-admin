@@ -75,3 +75,163 @@ go run main.go 直接访问http://localhost:8080
 > 2、用户不得利用monkey-admin从事非法行为，用户应当合法合规的使用，发现用户在使用产品时有任何的非法行为，monkey-admin有权配合有关机关进行调查或向政府部门举报，monkey-admin不承担用户因非法行为造成的任何法律责任，一切法律责任由用户自行承担，如因用户使用造成第三方损害的，用户应当依法予以赔偿。
 
 > 3、所有与使用monkey-admin相关的资源直接风险均由用户承担。 
+
+# Monkey Admin 部署配置文档
+
+## 1. 环境要求
+
+### 1.1 后端环境
+- Go 1.15+ (注意：excelize 包需要 Go 1.15+)
+- MySQL 5.7+
+- Redis 5.0+
+
+### 1.2 前端环境
+- Node.js v14+ (推荐使用 v14 版本，避免兼容性问题)
+- npm 6+
+
+## 2. 后端配置
+
+### 2.1 数据库配置
+配置文件位置：`config/mysql.ini`
+```ini
+[mysql]
+host = localhost
+port = 3306
+username = root
+password = your_password
+database = monkey_admin
+showType = mysql
+```
+
+### 2.2 Redis配置
+配置文件位置：`config/redis.ini`
+```ini
+[redis]
+host = localhost
+port = 6379
+password = your_password
+db = 0
+```
+
+### 2.3 日志配置
+- 日志目录：`/logs`
+- 需要创建日志目录并设置权限：
+```bash
+mkdir -p /logs
+chmod 777 /logs
+```
+
+## 3. 前端配置
+
+### 3.1 环境变量配置
+创建文件：`monkey-ui/.env.development`
+```
+# 开发环境配置
+ENV = 'development'
+
+# API基础路径
+VUE_APP_BASE_API = '/api/v1'
+```
+
+### 3.2 代理配置
+文件位置：`monkey-ui/vue.config.js`
+```javascript
+module.exports = {
+  devServer: {
+    port: 82, // 前端服务端口
+    proxy: {
+      '/api/v1': {
+        target: 'http://localhost:8080', // 后端服务地址
+        changeOrigin: true
+      }
+    }
+  }
+}
+```
+
+## 4. 启动步骤
+
+### 4.1 启动后端服务
+```bash
+# 在项目根目录下
+go run main.go
+```
+
+### 4.2 启动前端服务
+```bash
+# 进入前端目录
+cd monkey-ui
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+```
+
+## 5. 常见问题处理
+
+### 5.1 Go版本问题
+如果遇到 excelize 包相关错误：
+```
+note: module requires Go 1.15
+```
+解决方案：升级 Go 版本到 1.15 或更高
+
+### 5.2 端口占用
+- 后端默认端口：8080
+- 前端默认端口：82
+- 如需修改端口，请相应更新配置文件
+
+### 5.3 日志问题
+如果遇到日志文件错误：
+```
+[ERROR] open /logs/system.log: no such file or directory
+```
+解决方案：
+1. 创建日志目录
+2. 设置正确的权限
+3. 确保应用有写入权限
+
+### 5.4 数据库连接
+确保：
+1. MySQL 服务正常运行
+2. 数据库连接配置正确
+3. 数据库用户有足够权限
+
+## 6. API接口说明
+
+### 6.1 登录接口
+- 路径：`/api/v1/login`
+- 方法：POST
+- 参数：
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+### 6.2 用户信息接口
+- 路径：`/api/v1/getInfo`
+- 方法：GET
+- 需要携带 token
+
+## 7. 注意事项
+
+1. 确保所有必要的服务(MySQL、Redis)都已启动
+2. 检查配置文件中的连接信息是否正确
+3. 确保端口未被占用
+4. 前端开发时注意跨域配置
+5. 后端日志目录权限设置
+6. Go版本要求(1.15+)
+7. Node.js版本建议使用v14，避免兼容性问题
+
+## 8. 开发环境要求
+
+- 操作系统：Linux/Windows/MacOS
+- Go：1.15+
+- Node.js：v14+
+- MySQL：5.7+
+- Redis：5.0+
+- 编辑器：推荐使用 VSCode 或 GoLand 

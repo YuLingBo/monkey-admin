@@ -1,13 +1,15 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"monkey-admin/models/req"
 	"monkey-admin/pkg/cache"
 	"monkey-admin/pkg/library/tree/tree_menu"
 	"monkey-admin/pkg/library/user_util"
 	"monkey-admin/pkg/resp"
 	"monkey-admin/service"
+
+	"github.com/druidcaesa/gotool"
+	"github.com/gin-gonic/gin"
 )
 
 type LoginApi struct {
@@ -20,18 +22,26 @@ type LoginApi struct {
 // Login 登录
 func (a LoginApi) Login(c *gin.Context) {
 	loginBody := req.LoginBody{}
+	gotool.Logs.InfoLog().Println("收到登录请求，开始处理...")
+	
 	if c.BindJSON(&loginBody) == nil {
+		gotool.Logs.InfoLog().Printf("登录请求参数: username=%s", loginBody.UserName)
+		
 		m := make(map[string]string)
 		login, s := a.loginService.Login(loginBody.UserName, loginBody.Password)
+		
 		if login {
+			gotool.Logs.InfoLog().Printf("用户 %s 登录成功", loginBody.UserName)
 			//将token存入到redis中
 			user_util.SaveRedisToken(loginBody.UserName, s)
 			m["token"] = s
 			c.JSON(200, resp.Success(m))
 		} else {
+			gotool.Logs.ErrorLog().Printf("用户 %s 登录失败: %s", loginBody.UserName, s)
 			c.JSON(200, resp.ErrorResp(s))
 		}
 	} else {
+		gotool.Logs.ErrorLog().Println("登录请求参数绑定失败")
 		c.JSON(200, resp.ErrorResp(500, "参数绑定错误"))
 	}
 }

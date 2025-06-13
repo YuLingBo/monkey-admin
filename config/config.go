@@ -1,18 +1,19 @@
 package config
 
 import (
-	"github.com/Unknwon/goconfig"
-	"github.com/druidcaesa/gotool"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/Unknwon/goconfig"
+	"github.com/druidcaesa/gotool"
 )
 
 // BUILD 开发环境
-//const BUILD = "dev"
+const BUILD = "dev"
 
 //生产环境
-const BUILD = "prod"
+//const BUILD = "prod"
 
 var Cfg *goconfig.ConfigFile
 
