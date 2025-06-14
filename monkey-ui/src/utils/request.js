@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -53,6 +53,13 @@ service.interceptors.response.use(res => {
     const code = res.data.status || 200;
     // 获取错误信息
     const msg = errorCode[code] || res.data.msg || errorCode['default']
+    
+    // 处理token刷新
+    if (res.headers['new-token']) {
+      store.commit('SET_TOKEN', res.headers['new-token'])
+      setToken(res.headers['new-token'])
+    }
+    
     if (code === 401) {
       MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
           confirmButtonText: '重新登录',
